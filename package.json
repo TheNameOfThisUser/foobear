@@ -1,0 +1,25 @@
+{
+  "name": "serviceswrapper",
+  "version": "1.0.0",
+  "description": "Customer facing, AWS Lambda Node.js 8.10 function, that acts as a first layer wrapper around internal Verikai services.",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha spec.servicesWrapper.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TheNameOfThisUser/verikai.git"
+  },
+  "author": "Benjamin McSwain",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/TheNameOfThisUser/verikai/issues"
+  },
+  "homepage": "https://github.com/TheNameOfThisUser/verikai#readme",
+  "dependencies": {
+    "moment": "^2.24.0"
+  },
+  "devDependencies": {
+    "chai": "^4.2.0"
+  }
+}

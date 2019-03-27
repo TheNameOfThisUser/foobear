@@ -1,0 +1,38 @@
+service:
+  name: VerikaiServiceWrapper
+
+frameworkVersion: ">=1.0.0 <2.0.0"
+
+provider:
+  name: aws
+  runtime: nodejs8.10
+  stage: ${opt:stage, "dev"}
+  region: ${opt:region, "us-east-1"}
+  profile: default
+  environment:
+    test: ${self:custom.test.${self:provider.stage}}
+    customer_id: ${self:custom.customer_id.${self:provider.stage}}
+    campaign_id: ${self:custom.campaign_id.${self:provider.stage}}
+    xApiKey: ${self:custom.xApiKey.${self:provider.stage}}
+
+custom:
+  test:
+    local: "local_test"
+    dev: "dev_test"
+    prod: "prod_test"
+  customer_id:
+    dev: ""
+  campaign_id:
+    dev: ""
+  xApiKey:
+    dev: ""
+
+functions:
+  servicesWrapper:
+    handler: Handlers/servicesWrapperHandler.servicesWrapperHandler
+    name: ${self:provider.stage}-servicesWrapper
+    events:
+      - http:
+          path: customWrapper
+          method: post
+          private: true #Requires clients to add API keys values in the `x-api-key` header of their request

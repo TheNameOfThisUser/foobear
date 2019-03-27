@@ -1,0 +1,93 @@
+openapi: 3.0.0
+info:
+  title: services-wrapper
+  version: 1.0.0
+paths:
+  '/customerWrapper':
+    post:
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                api-key:
+                  type: string
+                Census:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/CensusObj'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CensusKitOutput'
+        '400':
+          description: Invalid JSON OR Missing Label OR Missing Domain OR Invalid Domain
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Database Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'     
+components:
+  schemas:
+    Empty:
+      type: object
+    Error:
+      type: object
+      properties:
+        message:
+          type: string
+    metaData:
+      type: object
+      properties:
+        meta_group_name:
+          type: string
+        meta_group_number:
+          type: string
+        meta_group_zip:
+          type: string
+        meta_quote_date:
+          type: string
+        source_filename:
+          type: string
+    CensusObj:
+      type: object
+      properties:
+        Phone:
+          type: string
+        Address:
+          type: string
+        Name:
+          type: string
+        DOB:
+          type: string
+        Gender:
+          type: string
+    CensusKitOutput:
+      type: object
+      properties:
+        matchRate:
+          type: integer
+        runTime:
+          type: string
+        requestMode:
+          type: string
+        metaData:
+          $ref: '#/components/schemas/metaData'
+        memberO2Scores:
+          type: array
+          items: 
+            type: integer
+        censusId:
+          type: string
+        state:
+          type: string 
