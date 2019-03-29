@@ -5,7 +5,6 @@ const https = require("https");
 const moment = require("moment");
 const customer_id = "105928";
 const campaign_id = "0250598";
-const xApiKey = "8QhnVrqe9p4B5ci3R06NR7QNpJgQ2tnc1kMQD7Lw";
 const transcodedFilename = "/tmp/transcoded.json";
 const resultFilename = "/tmp/result.json";
 class servicesWrapper {
@@ -19,6 +18,7 @@ class servicesWrapper {
       let parsedBody;
       try{
         parsedBody = JSON.parse(body);
+        this.xApiKey = parsedBody["api-key"];
         console.log(parsedBody);
         return resolve(parsedBody);
       } catch(e) {
@@ -111,7 +111,7 @@ class servicesWrapper {
         "headers": {
            "Content-Type": "application/json",
            "Content-Length": normalizedData.length,
-           "x-api-key": xApiKey
+           "x-api-key": this.xApiKey
         }
       };
       let request = https.request(options, (censusKitResponse) => {
