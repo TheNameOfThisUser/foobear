@@ -74,18 +74,18 @@ class servicesWrapper {
       }
       //write unit tests using 1,2, and 3 items in Census array
       normalizedData = {
-        rows: normalizedRows,
-        countTotal: parsedBody["Census"].length,
-        metaData: {
-          meta_group_name: "test name", 
-          meta_group_number: "123", 
-          meta_group_zip: "55555", 
-          meta_quote_date: "08/27/2019", 
+        "rows": normalizedRows,
+        "countTotal": parsedBody["Census"].length,
+        "metaData": {
+          "meta_group_name": "test name", 
+          "meta_group_number": "123", 
+          "meta_group_zip": "55555", 
+          "meta_quote_date": "08/27/2019", 
         }
       };
       //JSON.stringify(normalizedData);
       console.log(normalizedData);
-      return resolve(normalizedData);
+      return resolve(JSON.stringify(normalizedData));
     });
   }
 
@@ -108,11 +108,11 @@ class servicesWrapper {
       //https://api.alumai.com/census/v1/customer/{customer_id}/campaign/{campaign_id}/inline[/test]
       let customPath = "/census/v1/customer/" + customer_id + "/campaign/" + campaign_id + "/inline/test";
       let options = {
-        hostname: "api.alumai.com",
-        port: 443,
-        path: customPath,
-        method: "POST",
-        headers: {
+        "hostname": "api.alumai.com",
+        "port": 443,
+        "path": customPath,
+        "method": "POST",
+        "headers": {
            "Content-Type": "application/json",
            "Content-Length": normalizedData.length,
            "x-api-key": xApiKey
@@ -153,7 +153,6 @@ class servicesWrapper {
       return this.writeLog(transcodedFilename, normalizedData);
     })
     .then((loggedNormalizedData) => { 
-      console.log("normalizedData out of scope? " + normalizedData);
       return this.postCensusKit(loggedNormalizedData) //is normalizedData available in this scope?
     })
     .then((censusKitResponse) => {

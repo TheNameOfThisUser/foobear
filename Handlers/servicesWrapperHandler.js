@@ -1,13 +1,15 @@
 const servicesWrapper = require('../lib/servicesWrapper.js');
 
-exports.servicesWrapperHandler = function (event, context, callback) {
-  let servicesWrapperInstance = new servicesWrapper(event);
-  servicesWrapperInstance.run()
-  .then((res) => {
-    return callback(null, "body": JSON.stringify(res));
-  })
-  .catch((err) => {
-    console.error(err);
-    return callback(null, err);
-  })
+exports.servicesWrapperHandler = (event) => {
+  return new Promise((resolve, reject) => {
+    let servicesWrapperInstance = new servicesWrapper(event);
+    servicesWrapperInstance.run()
+    .then((censusKitResponse) => {
+      return resolve({"body": JSON.stringify(censusKitResponse)});
+    })
+    .catch((err) => {
+      console.error(err);
+      return reject(err);
+    });
+  });
 };

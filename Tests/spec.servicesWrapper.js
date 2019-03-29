@@ -1,32 +1,34 @@
 const servicesWrapper = require("../Lib/servicesWrapper.js");
+const servicesWrapperHandler = require("../Handlers/servicesWrapperHandler.js");
 const chai = require("chai");
 const assert = chai.assert;
 let sWInstance;
 let event;
 let parsedBody;
+let normalizedData;
 
 describe("servicesWrapper", function() {
   before(function(done) {
     event = {
-      body: {
+      "body": JSON.stringify({
         "api-key": "8QhnVrqe9p4B5ci3R06NR7QNpJgQ2tnc1kMQD7Lw",
-        Census: [
+        "Census": [
           {
-            Phone: "649-444-4928",
-            Address: "473 Pine St Fl 2, San Francisco, CA 94114",
-            Name: "Jason Smith",
-            DOB: "02/26/1970",
-            Gender: "Male"
+            "Phone": "649-444-4928",
+            "Address": "473 Pine St Fl 2, San Francisco, CA 94114",
+            "Name": "Jason Smith",
+            "DOB": "02/26/1970",
+            "Gender": "Male"
           },
           {
-            Phone: "949-234-5023",
-            Address: "1687 Wylie Ln, Draper, UT 84020",
-            Name: "Jannet Maquask",
-            DOB: "11/05/1964",
-            Gender: "Female"
+            "Phone": "949-234-5023",
+            "Address": "1687 Wylie Ln, Draper, UT 84020",
+            "Name": "Jannet Maquask",
+            "DOB": "11/05/1964",
+            "Gender": "Female"
           }
         ]
-      }
+      })
     };
     sWInstance = new servicesWrapper(event);
     done();
@@ -35,8 +37,7 @@ describe("servicesWrapper", function() {
   describe("servicesWrapper.parse(body)", function() {
     it("resolves parsed JSON string", function(done) {
       console.log(sWInstance);
-      let stringyBody = JSON.stringify(event.body);
-      sWInstance.parse(stringyBody)
+      sWInstance.parse(event.body)
       .then((parsedBodyRet) => {
         console.log(parsedBodyRet);
         assert.equal(parsedBodyRet["api-key"], "8QhnVrqe9p4B5ci3R06NR7QNpJgQ2tnc1kMQD7Lw");
@@ -51,7 +52,13 @@ describe("servicesWrapper", function() {
     });
 
     it("rejects non-JSON string", function(done) {
-      sWInstance.parse(event.body)
+      let invalidJson = {"invalidJson": "invalid"};
+      sWInstance.parse({"invalidJson": "invalid"})
+      .then((res) => {
+        console.log(res);
+        assert.fail();
+        done();
+      })
       .catch((err) => {
         console.error(err);
         assert.equal(err.statusCode, 400);
@@ -64,6 +71,11 @@ describe("servicesWrapper", function() {
     it("rejects missing api-key", function(done) {
       parsedBody["api-key"] = undefined;
       sWInstance.normalize(parsedBody)
+      .then((res) => {
+        console.log(res);
+        assert.fail();
+        done();
+      })
       .catch((err) => {
         console.error(err);
         assert.equal(err.statusCode, 422);
@@ -76,24 +88,29 @@ describe("servicesWrapper", function() {
     it("rejects missing Census", function(done) {
       parsedBody["Census"] = undefined;
       sWInstance.normalize(parsedBody)
+      .then((res) => {
+        console.log(res);
+        assert.fail();
+        done();
+      })
       .catch((err) => {
         console.error(err);
         assert.equal(err.statusCode, 422);
         assert.equal(JSON.parse(err.body), "Failed due to missing Census");
         parsedBody["Census"] = [
           {
-            Phone: "649-444-4928",
-            Address: "473 Pine St Fl 2, San Francisco, CA 94114",
-            Name: "Jason Smith",
-            DOB: "02/26/1970",
-            Gender: "Male"
+            "Phone": "649-444-4928",
+            "Address": "473 Pine St Fl 2, San Francisco, CA 94114",
+            "Name": "Jason Smith",
+            "DOB": "02/26/1970",
+            "Gender": "Male"
           },
           {
-            Phone: "949-234-5023",
-            Address: "1687 Wylie Ln, Draper, UT 84020",
-            Name: "Jannet Maquask",
-            DOB: "11/05/1964",
-            Gender: "Female"
+            "Phone": "949-234-5023",
+            "Address": "1687 Wylie Ln, Draper, UT 84020",
+            "Name": "Jannet Maquask",
+            "DOB": "11/05/1964",
+            "Gender": "Female"
           }
         ];
         done();
@@ -103,6 +120,11 @@ describe("servicesWrapper", function() {
     it("rejects missing Census properties (phone)", function(done) {
       parsedBody["Census"][1]["Phone"] = undefined;
       sWInstance.normalize(parsedBody)
+      .then((res) => {
+        console.log(res);
+        assert.fail();
+        done();
+      })
       .catch((err) => {
         console.error(err);
         assert.equal(err.statusCode, 422);
@@ -115,6 +137,11 @@ describe("servicesWrapper", function() {
     it("rejects missing Census properties (address)", function(done) {
       parsedBody["Census"][0]["Address"] = undefined;
       sWInstance.normalize(parsedBody)
+      .then((res) => {
+        console.log(res);
+        assert.fail();
+        done();
+      })
       .catch((err) => {
         console.error(err);
         assert.equal(err.statusCode, 422);
@@ -127,6 +154,11 @@ describe("servicesWrapper", function() {
     it("rejects missing Census properties (name)", function(done) {
       parsedBody["Census"][0]["Name"] = undefined;
       sWInstance.normalize(parsedBody)
+      .then((res) => {
+        console.log(res);
+        assert.fail();
+        done();
+      })
       .catch((err) => {
         console.error(err);
         assert.equal(err.statusCode, 422);
@@ -139,6 +171,11 @@ describe("servicesWrapper", function() {
     it("rejects missing Census properties (DOB)", function(done) {
       parsedBody["Census"][1]["DOB"] = undefined;
       sWInstance.normalize(parsedBody)
+      .then((res) => {
+        console.log(res);
+        assert.fail();
+        done();
+      })
       .catch((err) => {
         console.error(err);
         assert.equal(err.statusCode, 422);
@@ -151,6 +188,11 @@ describe("servicesWrapper", function() {
     it("rejects missing Census properties (gender)", function(done) {
       parsedBody["Census"][1]["Gender"] = undefined;
       sWInstance.normalize(parsedBody)
+      .then((res) => {
+        console.log(res);
+        assert.fail();
+        done();
+      })
       .catch((err) => {
         console.error(err);
         assert.equal(err.statusCode, 422);
@@ -163,6 +205,11 @@ describe("servicesWrapper", function() {
     it("rejects invalid Census properties (phone)", function(done) {
       parsedBody["Census"][1]["Phone"] = 8642223333;
       sWInstance.normalize(parsedBody)
+      .then((res) => {
+        console.log(res);
+        assert.fail();
+        done();
+      })
       .catch((err) => {
         console.error(err);
         assert.equal(err.statusCode, 422);
@@ -175,6 +222,11 @@ describe("servicesWrapper", function() {
     it("rejects invalid Census properties (address)", function(done) {
       parsedBody["Census"][1]["Address"] = 1423;
       sWInstance.normalize(parsedBody)
+      .then((res) => {
+        console.log(res);
+        assert.fail();
+        done();
+      })
       .catch((err) => {
         console.error(err);
         assert.equal(err.statusCode, 422);
@@ -187,6 +239,11 @@ describe("servicesWrapper", function() {
     it("rejects invalid Census properties (name)", function(done) {
       parsedBody["Census"][1]["Name"] = {"name": "invalidName"};
       sWInstance.normalize(parsedBody)
+      .then((res) => {
+        console.log(res);
+        assert.fail();
+        done();
+      })
       .catch((err) => {
         console.error(err);
         assert.equal(err.statusCode, 422);
@@ -199,6 +256,11 @@ describe("servicesWrapper", function() {
     it("rejects invalid Census properties (DOB)", function(done) {
       parsedBody["Census"][1]["DOB"] = 1211994;
       sWInstance.normalize(parsedBody)
+      .then((res) => {
+        console.log(res);
+        assert.fail();
+        done();
+      })
       .catch((err) => {
         console.error(err);
         assert.equal(err.statusCode, 422);
@@ -211,6 +273,11 @@ describe("servicesWrapper", function() {
     it("rejects invalid Census properties (gender)", function(done) {
       parsedBody["Census"][1]["Gender"] = 01101011;
       sWInstance.normalize(parsedBody)
+      .then((res) => {
+        console.log(res);
+        assert.fail();
+        done();
+      })
       .catch((err) => {
         console.error(err);
         assert.equal(err.statusCode, 422);
@@ -223,6 +290,11 @@ describe("servicesWrapper", function() {
     it("rejects invalid phone number", function(done) {
       parsedBody["Census"][1]["Phone"] = "1342341233";
       sWInstance.normalize(parsedBody)
+      .then((res) => {
+        console.log(res);
+        assert.fail();
+        done();
+      })
       .catch((err) => {
         console.error(err);
         assert.equal(err.statusCode, 422);
@@ -235,6 +307,11 @@ describe("servicesWrapper", function() {
     it("rejects invalid gender", function(done) {
       parsedBody["Census"][1]["Gender"] = "invalidGender";
       sWInstance.normalize(parsedBody)
+      .then((res) => {
+        console.log(res);
+        assert.fail();
+        done();
+      })
       .catch((err) => {
         console.error(err);
         assert.equal(err.statusCode, 422);
@@ -247,6 +324,11 @@ describe("servicesWrapper", function() {
     it("rejects invalid date format", function(done) {
       parsedBody["Census"][1]["DOB"] = "21/1/1994";
       sWInstance.normalize(parsedBody)
+      .then((res) => {
+        console.log(res);
+        assert.fail();
+        done();
+      })
       .catch((err) => {
         console.error(err);
         assert.equal(err.statusCode, 422);
@@ -258,21 +340,47 @@ describe("servicesWrapper", function() {
 
     it("resolves normalized data", function(done) {
       sWInstance.normalize(parsedBody)
-      .then((normalizedData) => {
-        console.error(normalizedData);
-        assert.equal(normalizedData.countTotal, 2);
+      .then((normalizedDataRet) => {
+        console.log(normalizedDataRet);
+        normalizedData = normalizedDataRet;
+        assert.equal(JSON.parse(normalizedDataRet).countTotal, 2);
+        done();
+      })
+      .catch((err) => {
+        console.error(err);
+        assert.fail();
         done();
       });
     });
   });
 
   describe("servicesWrapper.writeLog(filename, logData)", function() {
-    it("rejects fs writeFile error", function(done) {
-      done();
+    it("resolves logged transcoded data", function(done) {
+      sWInstance.writeLog("transcoded.json", JSON.stringify({json: "json", foo: "bar"}))
+      .then((transcodedRes) => {
+        console.log(transcodedRes);
+        assert.equal(transcodedRes, JSON.stringify({json: "json", foo: "bar"}));
+        done();
+      })
+      .catch((err) => {
+        console.error(err);
+        assert.fail();
+        done();
+      })
     });
 
-    it("resolves logged data", function(done) {
-      done();
+    it("resolves logged result data", function(done) {
+      sWInstance.writeLog("result.json", JSON.stringify({result: "results", important: "stuff"}))
+      .then((resultRes) => {
+        console.log(resultRes);
+        assert.equal(resultRes, JSON.stringify({result: "results", important: "stuff"}));
+        done();
+      })
+      .catch((err) => {
+        console.error(err);
+        assert.fail();
+        done();
+      })
     });
   });
 
@@ -281,19 +389,39 @@ describe("servicesWrapper", function() {
       done();
     });
 
-    it("resolves Census kit response", function(done) {
-      done();
-    });
+/*    it("resolves Census kit response .postCensusKit(normalizedData)", function(done) {
+      console.log("normData" + normalizedData);
+      sWInstance.postCensusKit(normalizedData)
+      .then((res) => {
+        console.log(res);
+        done();
+      })
+      .catch((err) => {
+        console.error(err);
+        assert.fail()
+        done();
+      });
+    });*/
   });
 
   describe("servicesWrapper.run()", function() {
-    it("resolves census kit response", function(done) {
-      done();
-    });
+/*    it("resolves census kit response .run()", function(done) {
+      sWInstance.run()
+      .then((res) => {
+        console.log(res);
+        done();
+      })
+      .catch((err) => {
+        console.error(err);
+        assert.fail();
+        done();
+      });
+    });*/
   });
 
   describe("servicesWrapperHandler", function() {
-    it("resolves census kit response", function(done) {
+    it("resolves census kit response .handler(event, context, callback)", function(done) {
+      servicesWrapperHandler()
       done();
     });
   });
