@@ -4,7 +4,7 @@
   "description": "Customer facing, AWS Lambda Node.js 8.10 function, that acts as a first layer wrapper around internal Verikai services.",
   "main": "index.js",
   "scripts": {
-    "test": "mocha spec.servicesWrapper.js"
+    "test": "mocha Tests/spec.servicesWrapper.js"
   },
   "repository": {
     "type": "git",

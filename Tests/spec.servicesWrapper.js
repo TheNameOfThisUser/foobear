@@ -9,6 +9,7 @@ let normalizedData;
 
 describe("servicesWrapper", function() {
   before(function(done) {
+    //use this api-key instead of const
     event = {
       "body": JSON.stringify({
         "api-key": "8QhnVrqe9p4B5ci3R06NR7QNpJgQ2tnc1kMQD7Lw",
@@ -385,15 +386,12 @@ describe("servicesWrapper", function() {
   });
 
   describe("servicesWrapper.postCensusKit(normalizedData)", function() {
-    it("rejects https request error", function(done) {
-      done();
-    });
-
-/*    it("resolves Census kit response .postCensusKit(normalizedData)", function(done) {
+    it("resolves Census kit response from .postCensusKit(normalizedData)", function(done) {
       console.log("normData" + normalizedData);
       sWInstance.postCensusKit(normalizedData)
       .then((res) => {
         console.log(res);
+        assert.equal(JSON.parse(res).state, "completed");
         done();
       })
       .catch((err) => {
@@ -401,14 +399,15 @@ describe("servicesWrapper", function() {
         assert.fail()
         done();
       });
-    });*/
+    });
   });
 
   describe("servicesWrapper.run()", function() {
-/*    it("resolves census kit response .run()", function(done) {
+    it("resolves census kit response from .run()", function(done) {
       sWInstance.run()
       .then((res) => {
         console.log(res);
+        assert.equal(JSON.parse(res).state, "completed");
         done();
       })
       .catch((err) => {
@@ -416,13 +415,22 @@ describe("servicesWrapper", function() {
         assert.fail();
         done();
       });
-    });*/
+    });
   });
 
   describe("servicesWrapperHandler", function() {
-    it("resolves census kit response .handler(event, context, callback)", function(done) {
-      servicesWrapperHandler()
-      done();
+    it("resolves census kit response from .handler(event)", function(done) {
+      servicesWrapperHandler.servicesWrapperHandler(event)
+      .then((res) => {
+        console.log(res);
+        assert.equal(JSON.parse(res.body).state, "completed");
+        done();
+      })
+      .catch((err) => {
+        console.error(err);
+        assert.fail();
+        done();
+      });
     });
   });
 });

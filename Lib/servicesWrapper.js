@@ -1,6 +1,4 @@
-//write testable and resuable code;
-//write tests TODO
-//better class/handler/object names TODO
+//class/handler/object names could be better.
 "use strict";
 const fs = require("fs");
 const https = require("https");
@@ -32,14 +30,14 @@ class servicesWrapper {
 
   normalize(parsedBody) {
     return new Promise((resolve, reject) => {
-      //check missing
-      //must have at least one census item
       //will match US as well as non-US phone numbers
       console.log(parsedBody);
       let normalizedRows = [];
       let normalizedData;
       let phoneNumberRegex = /(\+\d{1,2}\s)?\(?\d{3}\)?[\s.-]\d{3}[\s.-]\d{4}/;
-      //how to validate address without 3rd party library?
+      //how to confirm real address without 3rd party library?
+      //is it required?
+      //robust validation vs extra dependency?
       let genderEnum = ["male", "female"];
       if(!parsedBody["api-key"]) {
         console.error("Failed due to missing api-key");
@@ -60,7 +58,7 @@ class servicesWrapper {
         }
         if(!phoneNumberRegex.test(parsedBody["Census"][i]["Phone"])) {
           console.error("Failed due to invalid phone number in Census properties");
-          return reject({"statusCode": 422, "body": JSON.stringify("Failed due to invalid phone number in Census properties")})
+          return reject({"statusCode": 422, "body": JSON.stringify("Failed due to invalid phone number in Census properties")});
         }
         if(genderEnum.indexOf(parsedBody["Census"][i]["Gender"].toLowerCase()) < 0) {
           console.error("Failed due to invalid gender in Census properties");
@@ -72,7 +70,6 @@ class servicesWrapper {
         }
         normalizedRows.push({pii: parsedBody["Census"][i]});
       }
-      //write unit tests using 1,2, and 3 items in Census array
       normalizedData = {
         "rows": normalizedRows,
         "countTotal": parsedBody["Census"].length,
@@ -83,7 +80,6 @@ class servicesWrapper {
           "meta_quote_date": "08/27/2019", 
         }
       };
-      //JSON.stringify(normalizedData);
       console.log(normalizedData);
       return resolve(JSON.stringify(normalizedData));
     });
@@ -120,15 +116,12 @@ class servicesWrapper {
       };
       let request = https.request(options, (censusKitResponse) => {
         console.log("statusCode:", censusKitResponse.statusCode);
-        console.log("headers:", censusKitResponse.headers);
-        console.log(censusKitResponse);
-        let censusKitData;
+        let censusKitData = "";
         censusKitResponse.on('data', (piece) => {
-          console.log(piece);
           censusKitData += piece;
         });
         censusKitResponse.on('end', function () {
-          console.log(censusKitData);
+          console.log("CENSUS KIT DATA:", censusKitData);
           return resolve(censusKitData);
         });
       });
@@ -153,13 +146,14 @@ class servicesWrapper {
       return this.writeLog(transcodedFilename, normalizedData);
     })
     .then((loggedNormalizedData) => { 
-      return this.postCensusKit(loggedNormalizedData) //is normalizedData available in this scope?
+      return this.postCensusKit(loggedNormalizedData);
     })
     .then((censusKitResponse) => {
-      console.log(censusKitResponse);
-      this.writeLog(resultFilename, censusKitResponse);
-      return censusKitResponse;
+      return this.writeLog(resultFilename, censusKitResponse);
     })
+    .then((loggedCensusKitResponse) => {
+      return loggedCensusKitResponse;
+    });
   }
 }
 module.exports = servicesWrapper;
